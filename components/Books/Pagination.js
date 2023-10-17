@@ -6,9 +6,11 @@ export function Pagination(div, totalPages = tp) {
     var currentPage = 1;
     updateBooks(currentPage);
     var prevActiveButton = null;
+    
     div.innerHTML = `
         <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
+          
 
             ${generatePageButtons(totalPages)}
   

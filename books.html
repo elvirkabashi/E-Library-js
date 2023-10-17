@@ -11,7 +11,8 @@
 
     <header></header>
 
-
+   <section id="spinner"></section>
+    
     <section class="container my-5" >
         <div id="books"></div>
         <div id="pagination"></div>
@@ -21,14 +22,20 @@
     <footer></footer>
 
 
-
+        <script>
+        setTimeout(function () {
+        document.getElementById("spinner").style.display = "none";
+        }, 5000);
+        </script>
       <script type="module">
-        import {initHeader} from "./components/Header.js";
-        import {initFooter} from "./components/Footer.js";
-        import {Pagination,updateBooks} from './components/Pagination.js';
-        import {getBooks} from "./components/Books.js";
+        import {initHeader} from "./components/NavbarAndFooter/Header.js";
+        import {initFooter} from "./components/NavbarAndFooter/Footer.js";
+        import {Pagination,updateBooks} from './components/Books/Pagination.js';
+        import {getBooks} from "./components/Books/Books.js";
+        import {Spinner} from './components/Spinner.js';
 
         initHeader(document.querySelector("header"));
+        Spinner(document.querySelector("#spinner"))
 
         // getBooks().then(data => {
         //     document.querySelector('#books').innerHTML = composeBooks(data.books,2);
@@ -39,6 +46,7 @@
         // })
         
         //getBooks().then(data => console.log(data.books))
+        
         
         getBooks().then(data => {
         const totalPages = Math.ceil(data.results.length / 6);

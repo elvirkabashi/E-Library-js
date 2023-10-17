@@ -1,9 +1,7 @@
 
 
 export function getBooks(){
-    //const api = `https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=8IcGquk46DfTlaBS4udykWMd8RY6ZWeN`
-    //const api = `https://www.googleapis.com/books/v1/volumes?q=pride+prejudice&download=epub&key=AIzaSyAyVaO9lPhDMy0IlKq42FE9f40Syfwoorw`
-    const api = `https://gutendex.com/books/`
+const api = `https://gutendex.com/books/`
     return fetch(api)
     .then(response => response.json())
     .then(data => data)
@@ -19,11 +17,12 @@ export function composeBooks(books, currentPage) {
     const displayedBooks = books.slice(startIndex, endIndex);
 
     let html = `<div class="d-flex justify-content-center align-items-center row" id="books" style="max-width: 100%;">`;
-
+    
     for (let book of displayedBooks) {
       const img = book.formats["image/jpeg"] === null ? ".././assets/img/no_book_cover.jpg" : book.formats["image/jpeg"];
       const name = (book.authors[0].name === null) ? 'No author' : book.authors[0].name;
       html += `
+        
         <div class="card mb-3 d-flex justify-content-center align-items-center" style="max-width: 70%; height:220px">
           <div class="row g-0 d-flex ">
             <div class="col-md-4 d-flex align-items-center justify-content-start" >
