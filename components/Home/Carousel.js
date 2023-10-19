@@ -1,6 +1,6 @@
 export function Carousel(books){
 
-    //console.log(books.slice(0,3))
+    console.log(books)
     //console.log(books.slice(3,6))
     
     let html = `  <div class='container mt-5' style="height: 550px">
@@ -20,7 +20,7 @@ export function Carousel(books){
                      <img src=${book.formats["image/jpeg"]} width='151' height='233' alt="book"  />
                      <h6 class='mt-2'>${book.title}</h6>
                      <p>${book.authors[0].name}</p>
-                     <a class='btn main-color text-white' href="">Reserve</a>
+                     <a class='btn main-color text-white' href="./../book.html?id=${book.id}">Reserve</a>
                 </div>
               </div>`
             )

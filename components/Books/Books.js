@@ -32,7 +32,7 @@ export function composeBooks(books, currentPage) {
               <div class="card-body">
                 <h5 class="card-title">${book.title}</h5>
                 <p class="card-text">${book.subjects}</p>
-                <button type="button" class="btn btn-outline-dark">View Details</button>
+                <a type="button" class="btn btn-outline-dark" href="./../book.html?id=${book.id}">View Details</a>
                 <div class="d-flex flex-row-reverse">
                   <p class="card-text"><small class="text-body-secondary">Author: ${name}</small></p>
                 </div>
