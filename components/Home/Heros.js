@@ -1,5 +1,7 @@
-export function Heros(div){
-    div.innerHTML = `
+export function Heros(){
+    const user_is_loggedin = localStorage.getItem('loggedin_user');
+
+    let html = `
     <div>
     <div class='d-none d-lg-block'>
         <div class='row g-0 mt-5'>
@@ -7,14 +9,28 @@ export function Heros(div){
             <div class='col-image-left'></div>
         </div>
         <div class='col-4 col-md-4 container d-flex justify-content-center align-items-center'>
-            <div class='ml-2'>
+            <div class='ml-2'>`
+            if(user_is_loggedin == null){
+                html +=`
                 <h1>What have you been reading?</h1>
                 <p class='lead'>
                     The library team would love to know what you have been reading.
                     Whether it is to learn a skill or grow within one,
                     we will be able to provide the top content for you!
                 </p>
-                    <a class='btn main-color btn-lg text-white' href="">Sign up</a>
+                    <a class='btn main-color btn-lg text-white' href="">Sign up</a>`
+            }else{
+                html +=`
+                <h1>What have you been reading?</h1>
+                <p class='lead'>
+                    The library team would love to know what you have been reading.
+                    Whether it is to learn a skill or grow within one,
+                    we will be able to provide the top content for you!
+                </p>
+                    <a class='btn main-color btn-lg text-white' href="books.html">Explore top books</a>`              
+            }
+                    
+                    html+=`
             </div>
         </div>
     </div>
@@ -37,4 +53,5 @@ export function Heros(div){
 </div>
 </div>
     `
+    return html
 }

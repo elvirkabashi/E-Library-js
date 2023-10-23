@@ -32,29 +32,153 @@
 
         if(searchParams.has('id')){
             getBook(searchParams.get('id')).then(book => {
-                document.querySelector('#book').innerHTML = `
-                <div class="container mt-5">
-                    <h1 class="book-title text-center">${book.title}</h1>
-                    <div class="col">
-                        <div class="col-md-12 text-center">
-                            <img src=${book.formats["image/jpeg"]} width=500 alt="Fotografia e Librit" class="img-fluid"> <i class="bi bi-heart"></i>
-                        </div>
-                        <div class="col-md-12 text-center">
-                            <small class="text-center"><b>Author</b>: ${book.authors[0].name} ${book.authors[0].birth_year}-${book.authors[0].death_year}</small>
+                let html = `<div class="container mt-5">`;
                     
-                            <p class="mt-5">${book.subjects}</p>
+
+                html +=`
+                
+                    <h1 class="book-title text-center">${book.title}</h1>
+                    <div class="alert">
                         
+                    </div>
+                    <div class="d-flex">
+                        <div class="col">
+                            <div class="text-center">
+                                <img src=${book.formats["image/jpeg"]} width=500 alt="Fotografia e Librit" class="img-fluid"> <i class="bi bi-heart"></i>
+                            </div>
+                            <div class=" text-center">
+                                <small class="text-center"><b>Author</b>: ${book.authors[0].name} ${book.authors[0].birth_year}-${book.authors[0].death_year}</small>
+                        
+                                <p class="mt-5">${book.subjects}</p>
+                            
+                            </div>
                         </div>
+                        
+                        <div class="card" style="width: 18rem;height:200px">
+                        <div class="card-body">
+                            <h5 class="card-title">Checkout</h5>
+                            
+                            <p class="card-text" id="tit">If you want to borrow this book, you can borrow it for 7 days.</p>
+                            <a href="#" class="btn btn-success" id="checkout">Checkout</a>
+                        </div>
+                        </div>
+
+                           
                     </div>
                 </div>
                 `
-            })
-        }else{
+                document.querySelector('#book').innerHTML = html;
+                
+
+                document.getElementById('checkout').addEventListener("click", (e) => {
+                    e.preventDefault();
+                    let conf = confirm(`You have checked out ${book.title}`);
+
+                    if(conf){
+                    const userloggedin = localStorage.getItem('loggedin_user');
+                    const checkedout = (localStorage.getItem('checkedout') == null) ? [] : JSON.parse(localStorage.getItem('checkedout'))
+                  
+
+                    var dataAktuale = new Date();
+
+                    var dataEnderdhjesPlus7 = new Date(dataAktuale);
+                    dataEnderdhjesPlus7.setDate(dataEnderdhjesPlus7.getDate() + 7);
+
+                    //"10/27/2023"
+                    function formatDate(date) {
+                    var day = date.getDate().toString().padStart(2, '0');  
+                    var month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+                    var year = date.getFullYear();
+                    return month + '/' + day + '/' + year;
+                    }
+
+                    var returnDate = formatDate(dataEnderdhjesPlus7);
+
+                    const check = {
+                        userEmail: userloggedin,
+                        return_date: returnDate,
+                        bookId: book.id,
+                        title: book.title,
+                        img:book.formats["image/jpeg"]
+                    }
+
+                    
+                    if(checkedout.length > 0){
+                        const userCheckBook = checkedout.filter(c => (c.userEmail === check.userEmail) && (c.bookId === check.bookId))
+                        
+                        if(userCheckBook.length > 0){
+                            //alert('This book was checked')
+                            const title = document.querySelector('#tit')
+                            const btn = document.querySelector('#checkout')
+
+                            //title.classList.add('d-none')
+                            btn.classList.add('btn','btn-warning','disabled')
+                            btn.textContent = 'Checkedout';
+                            
+
+                            var getReturnDate = checkedout.filter(m => (m.bookId == searchParams.get('id')))
+                            
+                            var dataEDhene = getReturnDate[0].return_date; //"10/27/2023"
+                            console.log(dataEDhene)
+
+                            var dataEnderdhjes = new Date(dataEDhene);
+
+                            var dataAktuale = new Date();
+
+                            var diferenceNeDite = Math.floor((dataEnderdhjes - dataAktuale) / (1000 * 60 * 60 * 24));
+
+                            if(diferenceNeDite >= 0){
+                                document.querySelector('.card-text').innerHTML = `This book has been checkedout and has ${diferenceNeDite} days left` 
+                            }else{
+                                let e = document.querySelector('.card-text')
+                                e.innerHTML = `You haven't returned the book, you are ${diferenceNeDite} days late`
+                                e.classList.add('text-danger')
+                                document.querySelector('.alert').innerHTML = `
+                                <div class="alert alert-danger" role="alert">
+                                    This book has't been returned by the due date, go to the <a href="http://127.0.0.1:5500/shelf.html" class="alert-link">Shelf Page</a> and return it!.
+                                </div>
+                                `
+                            }
+
+                           
+                        }else{
+                            localStorage.setItem('checkedout', JSON.stringify([...checkedout,check]));
+                            document.querySelector('.alert').innerHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Success!</strong> ${book.title} has been borrowed successfully, please check your Shelf page.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            `
+                        }
+                    }else{
+                       localStorage.setItem('checkedout', JSON.stringify([check])); 
+                       document.querySelector('.alert').innerHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Success!</strong> ${book.title} has been borrowed successfully, please check your Shelf page.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            `
+                    }
+
+                }else{
+                    const id = searchParams.get('id');
+                    window.location.href = `http://127.0.0.1:5500/book.html?id=${id}`;
+                }//confirm
+                
+
+                })//lisener
+
+
+            })//getBook
+
+
+        }else{//id
             window.location.href = 'http://127.0.0.1:5500/';
         }
 
         initFooter(document.querySelector("footer"));
 </script>
+<script src="./assets/js/dynamicListener.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
