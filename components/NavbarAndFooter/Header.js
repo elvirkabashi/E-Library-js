@@ -25,6 +25,18 @@ export function initHeader(header){
       `
     }
 
+    function shelf(){
+      let html = `<li class="nav-item">`
+
+      if(user_is_loggedin){
+        html += `<a class="nav-link" href="shelf.html">Shelf</a>`
+      }
+
+      html += `</li>`
+
+      return html;
+    }
+
     header.innerHTML = `
     <nav class="navbar navbar-expand-lg navbar-dark main-color py-3">
     <div class="container-fluid">
@@ -39,9 +51,7 @@ export function initHeader(header){
             <a href="books.html" class="nav-link">Search Books</a>
           </li>
 
-          <li class="nav-item">
-           <a class="nav-link" href="shelf.html">Shelf</a>
-          </li>
+          ${shelf()}
 
         </ul>
         <ul class="navbar-nav ms-auto">

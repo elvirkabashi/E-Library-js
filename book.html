@@ -72,17 +72,31 @@
 
                 document.getElementById('checkout').addEventListener("click", (e) => {
                     e.preventDefault();
+
+                    const title = document.querySelector('#tit')
+                    const btn = document.querySelector('#checkout')
+
                     let conf = confirm(`You have checked out ${book.title}`);
 
                     if(conf){
                     const userloggedin = localStorage.getItem('loggedin_user');
                     const checkedout = (localStorage.getItem('checkedout') == null) ? [] : JSON.parse(localStorage.getItem('checkedout'))
                   
+                    if(userloggedin == null){
+                        document.querySelector('.alert').innerHTML = `
+                                <div class="alert alert-danger" role="alert">
+                                    You must log in <a href="http://127.0.0.1:5500/login.html" class="alert-link">LogIn</a> first!
+                                </div>
+                                `
+                        return
+                    }
+
+                    
 
                     var dataAktuale = new Date();
 
-                    var dataEnderdhjesPlus7 = new Date(dataAktuale);
-                    dataEnderdhjesPlus7.setDate(dataEnderdhjesPlus7.getDate() + 7);
+                    var dataPlus7 = new Date(dataAktuale);
+                    dataPlus7.setDate(dataPlus7.getDate() + 7);
 
                     //"10/27/2023"
                     function formatDate(date) {
@@ -92,7 +106,7 @@
                     return month + '/' + day + '/' + year;
                     }
 
-                    var returnDate = formatDate(dataEnderdhjesPlus7);
+                    var returnDate = formatDate(dataPlus7);
 
                     const check = {
                         userEmail: userloggedin,
@@ -102,14 +116,40 @@
                         img:book.formats["image/jpeg"]
                     }
 
+
+                    const userCheckedBook = checkedout.filter(c => (c.userEmail === check.userEmail) )
+                    var count = 0;
+
+                    for(let i = 0;i<userCheckedBook.length; i++){
+                        
+
+                        let returnDate = userCheckedBook[i].return_date
+
+                        let dataEnderdhjes = new Date(returnDate);
+
+                        let dataAktuale = new Date();
+
+                        let diferenceNeDite = Math.floor((dataEnderdhjes - dataAktuale) / (1000 * 60 * 60 * 24));
+
+                        if(diferenceNeDite < 0){
+                            document.querySelector('.alert').innerHTML = `
+                                <div class="alert alert-danger" role="alert">
+                                    You have books that you haven't returned! Go to <a href="http://127.0.0.1:5500/shelf.html" class="alert-link">Shelf Page</a> and return it!.
+                                </div>
+                                `
+                            return
+                        }
+                        
+                    }
+                    
+
                     
                     if(checkedout.length > 0){
                         const userCheckBook = checkedout.filter(c => (c.userEmail === check.userEmail) && (c.bookId === check.bookId))
                         
                         if(userCheckBook.length > 0){
                             //alert('This book was checked')
-                            const title = document.querySelector('#tit')
-                            const btn = document.querySelector('#checkout')
+                            
 
                             //title.classList.add('d-none')
                             btn.classList.add('btn','btn-warning','disabled')
@@ -119,7 +159,7 @@
                             var getReturnDate = checkedout.filter(m => (m.bookId == searchParams.get('id')))
                             
                             var dataEDhene = getReturnDate[0].return_date; //"10/27/2023"
-                            console.log(dataEDhene)
+                            //console.log(dataEDhene)
 
                             var dataEnderdhjes = new Date(dataEDhene);
 
