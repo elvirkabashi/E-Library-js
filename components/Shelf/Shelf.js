@@ -2,7 +2,7 @@ export function Shelf(){
     const user_is_loggedin = localStorage.getItem('loggedin_user');
     //console.log(user_is_loggedin)
     if(user_is_loggedin == null) {
-        window.location.href = 'http://127.0.0.1:5501/login.html';
+        window.location.href = 'http://127.0.0.1:5500/login.html';
     }
 
 
@@ -29,17 +29,37 @@ export function Shelf(){
                         <div>`
                         
                         
-                        let data_dhene = book.return_date
-                        let formatData = new Date(data_dhene)
-
+                        let data_dhene = book.return_date;
+                        let formatData = new Date(format(data_dhene));
+                        
                         var dataAktuale = new Date();
-                        var diferenceNeDite = Math.floor((formatData - dataAktuale) / (1000 * 60 * 60 * 24));
-                        //console.log(diferenceNeDite)
-                        if(diferenceNeDite >= 0){
-                        html += `<p>Please return before the date: <b>${book.return_date}</b></p>`
-                        }else{
-                        html += `<p class="text-danger">This book is <b>${diferenceNeDite}</b> days late, it was returned on this date "${book.return_date}"!!!</p>`
+                        var todayWithoutTime = new Date(dataAktuale.getFullYear(), dataAktuale.getMonth(), dataAktuale.getDate());
+                        
+                        var differenceInDays = Math.floor((formatData - todayWithoutTime) / (1000 * 60 * 60 * 24));
+                        
+                        function format(data_dhene) {
+                            var dateComponents = data_dhene.split('/');
+                        
+                            var year = parseInt(dateComponents[2], 10);
+                            var month = parseInt(dateComponents[0], 10) - 1;
+                            var day = parseInt(dateComponents[1], 10);
+                        
+                            var formattedDate = new Date(year, month, day);
+                        
+                            return formattedDate;
                         }
+                        
+                        //console.log(todayWithoutTime)
+                        //console.log(formatData)
+                        
+                        if (differenceInDays < 0) {
+                            html += `<p class="text-danger">This book is <b>${-differenceInDays}</b> days late, it was returned on this date "${book.return_date}"!!!</p>`;
+                        } else if (todayWithoutTime.getTime() === formatData.getTime()) {
+                            html += `<p class="text-danger">The return date is today!!!</p>`;
+                        } else{
+                            html += `<p>Please return before the date: <b>${book.return_date}</b></p>`
+                        }
+                        
                         html += `</div>
                     </div>
                         <div class="card-body">
